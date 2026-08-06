@@ -31,13 +31,23 @@ export default function AdminForm({
   onCancel,
 }: AdminFormProps) {
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string
+    centerName: string
+    location: string
+    centerType: Content['centerType']
+    purpose: string[]
+    mediaType: Content['mediaType']
+    mediaLink: string
+    description: string
+    tags: string
+  }>({
     title: '',
     centerName: '',
     location: '',
-    centerType: 'rehabilitation' as const,
-    purpose: [] as string[],
-    mediaType: 'youtube' as const,
+    centerType: 'rehabilitation',
+    purpose: [],
+    mediaType: 'youtube',
     mediaLink: '',
     description: '',
     tags: '',
