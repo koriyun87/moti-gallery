@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { supabase, type Content } from '@/lib/supabase'
 import ContentCard from '@/components/ContentCard'
 import FilterPanel from '@/components/FilterPanel'
-import { Filter, X } from 'lucide-react'
+import { Filter, X, Link as LinkIcon } from 'lucide-react'
 
 const CENTER_TYPES = [
   { id: 'rehabilitation', label: '재활센터' },
@@ -21,22 +22,83 @@ const PURPOSES = [
   { id: 'athleticism', label: '운동 능력 개발' },
 ]
 
-export default function GalleryPage() {
+type FilterState = {
+  centerType: string[]
+  purpose: string[]
+  location: string[]
+}
+
+// 센터컨셉/활용목적은 고정된 값 목록이라 짧은 숫자 코드로 압축 (URL 단축용)
+// ⚠️ 이 코드는 한번 정해지면 순서를 바꾸면 안 됨 (기존에 공유된 링크가 깨짐)
+const CENTER_TYPE_CODE: Record<string, string> = {
+  rehabilitation: '0',
+  pilates: '1',
+  fitness: '2',
+  performance: '3',
+}
+const CENTER_TYPE_CODE_REVERSE = Object.fromEntries(
+  Object.entries(CENTER_TYPE_CODE).map(([k, v]) => [v, k])
+)
+
+const PURPOSE_CODE: Record<string, string> = {
+  rehabilitation: '0',
+  bodyShape: '1',
+  strength: '2',
+  flexibility: '3',
+  athleticism: '4',
+}
+const PURPOSE_CODE_REVERSE = Object.fromEntries(
+  Object.entries(PURPOSE_CODE).map(([k, v]) => [v, k])
+)
+
+// URL 쿼리 파라미터 ↔ 필터 객체 변환 유틸
+function filtersFromParams(params: URLSearchParams): FilterState {
+  const centerCodes = params.get('c')?.split(',').filter(Boolean) || []
+  const purposeCodes = params.get('p')?.split(',').filter(Boolean) || []
+  const location = params.get('l')?.split(',').filter(Boolean) || []
+
+  return {
+    centerType: centerCodes.map(c => CENTER_TYPE_CODE_REVERSE[c]).filter(Boolean),
+    purpose: purposeCodes.map(c => PURPOSE_CODE_REVERSE[c]).filter(Boolean),
+    location,
+  }
+}
+
+function paramsFromFilters(filters: FilterState): string {
+  const params = new URLSearchParams()
+  if (filters.centerType.length) {
+    params.set('c', filters.centerType.map(id => CENTER_TYPE_CODE[id]).join(','))
+  }
+  if (filters.purpose.length) {
+    params.set('p', filters.purpose.map(id => PURPOSE_CODE[id]).join(','))
+  }
+  if (filters.location.length) {
+    params.set('l', filters.location.join(','))
+  }
+  return params.toString()
+}
+
+function GalleryContent() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   const [contents, setContents] = useState<Content[]>([])
   const [filteredContents, setFilteredContents] = useState<Content[]>([])
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
   const [locations, setLocations] = useState<string[]>([])
+  const [linkCopied, setLinkCopied] = useState(false)
 
-  const [filters, setFilters] = useState({
-    centerType: [] as string[],
-    purpose: [] as string[],
-    location: [] as string[],
-  })
+  // 초기 필터 상태를 URL에서 읽어옴
+  const [filters, setFilters] = useState<FilterState>(() =>
+    filtersFromParams(searchParams)
+  )
 
   // Fetch 콘텐츠
   useEffect(() => {
     fetchContents()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchContents = async () => {
@@ -51,17 +113,13 @@ export default function GalleryPage() {
 
       const typedData = (data || []) as unknown as Content[]
       setContents(typedData)
-      
+
       // 위치 추출
       const uniqueLocations = [...new Set(typedData.map(c => c.location))]
       setLocations(uniqueLocations.sort())
 
-      // 초기 필터링
-      applyFilters(typedData, {
-        centerType: [],
-        purpose: [],
-        location: [],
-      })
+      // URL에 있던 필터를 그대로 적용해서 초기 렌더링
+      applyFilters(typedData, filtersFromParams(searchParams))
     } catch (error) {
       console.error('Error fetching contents:', error)
     } finally {
@@ -71,7 +129,7 @@ export default function GalleryPage() {
 
   const applyFilters = (
     data: Content[],
-    filterState: typeof filters
+    filterState: FilterState
   ) => {
     let filtered = data
 
@@ -92,9 +150,13 @@ export default function GalleryPage() {
     setFilteredContents(filtered)
   }
 
-  const handleFilterChange = (newFilters: typeof filters) => {
+  const handleFilterChange = (newFilters: FilterState) => {
     setFilters(newFilters)
     applyFilters(contents, newFilters)
+
+    // URL 업데이트 (주소창에 필터 조건이 반영됨 → 링크 공유 가능)
+    const query = paramsFromFilters(newFilters)
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
   }
 
   const hasActiveFilters =
@@ -106,6 +168,7 @@ export default function GalleryPage() {
     const emptyFilters = { centerType: [], purpose: [], location: [] }
     setFilters(emptyFilters)
     applyFilters(contents, emptyFilters)
+    router.replace(pathname, { scroll: false })
   }
 
   return (
@@ -155,6 +218,20 @@ export default function GalleryPage() {
                   )}
                 </div>
 
+                {hasActiveFilters && (
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.href)
+                      setLinkCopied(true)
+                      setTimeout(() => setLinkCopied(false), 2000)
+                    }}
+                    className="w-full mb-6 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg flex items-center justify-center gap-2 transition"
+                  >
+                    <LinkIcon size={16} />
+                    {linkCopied ? '복사됨!' : '이 필터 링크 복사'}
+                  </button>
+                )}
+
                 <FilterPanel
                   filters={filters}
                   onFilterChange={handleFilterChange}
@@ -200,5 +277,13 @@ export default function GalleryPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function GalleryPage() {
+  return (
+    <Suspense fallback={null}>
+      <GalleryContent />
+    </Suspense>
   )
 }
