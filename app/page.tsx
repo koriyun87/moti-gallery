@@ -5,6 +5,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { supabase, type Content } from '@/lib/supabase'
 import ContentCard from '@/components/ContentCard'
 import FilterPanel from '@/components/FilterPanel'
+import BannerStrip from '@/components/BannerStrip'
 import { Filter, X, Link as LinkIcon } from 'lucide-react'
 
 const CENTER_TYPES = [
@@ -245,6 +246,7 @@ function GalleryContent() {
 
           {/* 콘텐츠 그리드 */}
           <div className="lg:col-span-4">
+            <BannerStrip />
             {loading ? (
               <div className="text-center py-12">
                 <div className="inline-block animate-spin">

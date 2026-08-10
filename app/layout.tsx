@@ -2,8 +2,16 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Moti 콘텐츠 갤러리',
-  description: '모티 장비의 활용 사례를 센터별, 목적별로 분류해서 보세요',
+  title: "MOTY 콘텐츠 갤러리",
+  description: "센터별 인스타그램 콘텐츠를 한눈에",
+  openGraph: {
+    title: "MOTY 콘텐츠 갤러리",
+    description: "센터별 인스타그램 콘텐츠를 한눈에",
+    url: "https://moti-gallery.vercel.app",
+    siteName: "MOTY 콘텐츠 갤러리",
+    locale: "ko_KR",
+    type: "website",
+  }
 }
 
 export default function RootLayout({
