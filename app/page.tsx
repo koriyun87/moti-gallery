@@ -179,7 +179,7 @@ function GalleryContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex justify-between items-start">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 모티 활용 사례
               </h2>
               <p className="text-gray-600">
@@ -188,9 +188,9 @@ function GalleryContent() {
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden bg-moti-primary text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-opacity-90"
-            >
-              <Filter size={20} />
+              className="lg:hidden bg-moti-primary text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-sm hover:bg-opacity-90"
+            >   
+              <Filter size={16} />
               필터
             </button>
           </div>
