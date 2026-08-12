@@ -223,7 +223,7 @@ function GalleryContent() {
               showFilters ? 'block' : 'hidden'
             } lg:block lg:col-span-1 mb-8 lg:mb-0`}
           >
-            <div className="sticky top-20">
+            <div className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-lg font-bold text-gray-900">필터</h3>
