@@ -13,15 +13,18 @@ interface FilterPanelProps {
     centerType: string[]
     purpose: string[]
     location: string[]
+    tags: string[]
   }
   onFilterChange: (filters: {
     centerType: string[]
     purpose: string[]
     location: string[]
+    tags: string[]
   }) => void
   centerTypes: FilterOption[]
   purposes: FilterOption[]
   locations: string[]
+  tags: string[]
 }
 
 export default function FilterPanel({
@@ -30,9 +33,10 @@ export default function FilterPanel({
   centerTypes,
   purposes,
   locations,
+  tags,
 }: FilterPanelProps) {
   const handleToggleFilter = useCallback(
-    (category: 'centerType' | 'purpose' | 'location', value: string) => {
+    (category: 'centerType' | 'purpose' | 'location' | 'tags', value: string) => {
       const currentFilters = filters[category]
       const newFilters = currentFilters.includes(value)
         ? currentFilters.filter(f => f !== value)
@@ -124,6 +128,26 @@ export default function FilterPanel({
                 label={location}
                 checked={filters.location.includes(location)}
                 onChange={() => handleToggleFilter('location', location)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 태그 */}
+      {tags.length > 0 && (
+        <div>
+          <h4 className="font-semibold text-gray-900 mb-3 text-sm">
+            태그
+          </h4>
+          <div className="space-y-2 max-h-48 overflow-y-auto">
+            {tags.map(tag => (
+              <FilterCheckbox
+                key={tag}
+                id={tag}
+                label={'#' + tag}
+                checked={filters.tags.includes(tag)}
+                onChange={() => handleToggleFilter('tags', tag)}
               />
             ))}
           </div>

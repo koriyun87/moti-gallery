@@ -27,6 +27,7 @@ type FilterState = {
   centerType: string[]
   purpose: string[]
   location: string[]
+  tags: string[]
 }
 
 // 센터컨셉/활용목적은 고정된 값 목록이라 짧은 숫자 코드로 압축 (URL 단축용)
@@ -57,11 +58,13 @@ function filtersFromParams(params: URLSearchParams): FilterState {
   const centerCodes = params.get('c')?.split(',').filter(Boolean) || []
   const purposeCodes = params.get('p')?.split(',').filter(Boolean) || []
   const location = params.get('l')?.split(',').filter(Boolean) || []
+  const tags = params.get('t')?.split(',').filter(Boolean) || []
 
   return {
     centerType: centerCodes.map(c => CENTER_TYPE_CODE_REVERSE[c]).filter(Boolean),
     purpose: purposeCodes.map(c => PURPOSE_CODE_REVERSE[c]).filter(Boolean),
     location,
+    tags,
   }
 }
 
@@ -76,6 +79,9 @@ function paramsFromFilters(filters: FilterState): string {
   if (filters.location.length) {
     params.set('l', filters.location.join(','))
   }
+  if (filters.tags.length) {
+    params.set('t', filters.tags.join(','))
+  }
   return params.toString()
 }
 
@@ -89,6 +95,7 @@ function GalleryContent() {
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
   const [locations, setLocations] = useState<string[]>([])
+  const [allTags, setAllTags] = useState<string[]>([])
   const [linkCopied, setLinkCopied] = useState(false)
 
   // 초기 필터 상태를 URL에서 읽어옴
@@ -119,6 +126,10 @@ function GalleryContent() {
       const uniqueLocations = [...new Set(typedData.map(c => c.location))]
       setLocations(uniqueLocations.sort())
 
+      // 태그 추출
+      const uniqueTags = [...new Set(typedData.flatMap(c => c.tags))]
+      setAllTags(uniqueTags.sort())
+
       // URL에 있던 필터를 그대로 적용해서 초기 렌더링
       applyFilters(typedData, filtersFromParams(searchParams))
     } catch (error) {
@@ -148,6 +159,12 @@ function GalleryContent() {
       filtered = filtered.filter(c => filterState.location.includes(c.location))
     }
 
+    if (filterState.tags.length > 0) {
+      filtered = filtered.filter(c =>
+        c.tags.some(tag => filterState.tags.includes(tag))
+      )
+    }
+
     setFilteredContents(filtered)
   }
 
@@ -163,10 +180,11 @@ function GalleryContent() {
   const hasActiveFilters =
     filters.centerType.length > 0 ||
     filters.purpose.length > 0 ||
-    filters.location.length > 0
+    filters.location.length > 0 ||
+    filters.tags.length > 0
 
   const resetFilters = () => {
-    const emptyFilters = { centerType: [], purpose: [], location: [] }
+    const emptyFilters = { centerType: [], purpose: [], location: [], tags: [] }
     setFilters(emptyFilters)
     applyFilters(contents, emptyFilters)
     router.replace(pathname, { scroll: false })
@@ -179,7 +197,7 @@ function GalleryContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex justify-between items-start">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 모티 활용 사례
               </h2>
               <p className="text-gray-600">
@@ -188,9 +206,9 @@ function GalleryContent() {
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden bg-moti-primary text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-sm hover:bg-opacity-90"
-            >   
-              <Filter size={16} />
+              className="lg:hidden bg-moti-primary text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-opacity-90"
+            >
+              <Filter size={20} />
               필터
             </button>
           </div>
@@ -239,6 +257,7 @@ function GalleryContent() {
                   centerTypes={CENTER_TYPES}
                   purposes={PURPOSES}
                   locations={locations}
+                  tags={allTags}
                 />
               </div>
             </div>

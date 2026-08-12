@@ -12,6 +12,14 @@ import {
   Image as ImageIcon,
 } from 'lucide-react'
 
+function extractStoragePath(publicUrl: string): string | null {
+  // 예: https://xxx.supabase.co/storage/v1/object/public/banners/파일명.jpg
+  const marker = '/banners/'
+  const idx = publicUrl.indexOf(marker)
+  if (idx === -1) return null
+  return publicUrl.slice(idx + marker.length)
+}
+
 function BannerManager() {
   const [banners, setBanners] = useState<Banner[]>([])
   const [loading, setLoading] = useState(true)
@@ -45,6 +53,8 @@ function BannerManager() {
     const file = e.target.files?.[0]
     if (!file) return
 
+    const previousUrl = form.imageUrl
+
     setUploading(true)
     try {
       const ext = file.name.split('.').pop()
@@ -60,6 +70,14 @@ function BannerManager() {
 
       const { data } = supabase.storage.from('banners').getPublicUrl(fileName)
       setForm((prev) => ({ ...prev, imageUrl: data.publicUrl }))
+
+      // 기존에 업로드했던 이미지가 있으면 (수정 중 새 이미지로 교체) 예전 파일 삭제
+      if (previousUrl) {
+        const oldPath = extractStoragePath(previousUrl)
+        if (oldPath) {
+          supabase.storage.from('banners').remove([oldPath])
+        }
+      }
     } catch (error) {
       console.error('Error uploading image:', error)
       alert('이미지 업로드 실패')
@@ -126,16 +144,37 @@ function BannerManager() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('이 배너를 삭제할까요?')) return
+    if (!confirm('이 배너를 삭제할까요? (이미지 파일도 함께 삭제됩니다)')) return
     try {
+      const target = banners.find((b) => b.id === id)
+
       const { error } = await supabase.from('banners').delete().eq('id', id)
       if (error) throw error
+
+      // DB 삭제 성공 후, 저장소의 실제 이미지 파일도 삭제
+      if (target?.imageUrl) {
+        const path = extractStoragePath(target.imageUrl)
+        if (path) {
+          supabase.storage.from('banners').remove([path])
+        }
+      }
+
       setBanners(banners.filter((b) => b.id !== id))
       if (editingBannerId === id) resetForm()
     } catch (error) {
       console.error('Error deleting banner:', error)
       alert('삭제 실패')
     }
+  }
+
+  const handleRemoveImage = () => {
+    if (form.imageUrl) {
+      const path = extractStoragePath(form.imageUrl)
+      if (path) {
+        supabase.storage.from('banners').remove([path])
+      }
+    }
+    setForm((prev) => ({ ...prev, imageUrl: '' }))
   }
 
   const handleToggleActive = async (banner: Banner) => {
@@ -210,11 +249,20 @@ function BannerManager() {
               배너 이미지 *
             </label>
             {form.imageUrl && (
-              <img
-                src={form.imageUrl}
-                alt="미리보기"
-                className="w-full aspect-video object-cover rounded-lg mb-2 bg-gray-100"
-              />
+              <div className="relative mb-2">
+                <img
+                  src={form.imageUrl}
+                  alt="미리보기"
+                  className="w-full aspect-video object-cover rounded-lg bg-gray-100"
+                />
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white text-xs px-2 py-1 rounded"
+                >
+                  이미지 삭제
+                </button>
+              </div>
             )}
             <input
               type="file"
