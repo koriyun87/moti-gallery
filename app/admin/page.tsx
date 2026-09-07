@@ -467,7 +467,7 @@ export default function AdminPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* 폼 */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6 sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
+            <div className="bg-white rounded-lg shadow p-6 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold text-gray-900">
                   {editingId ? '편집' : '새 콘텐츠 추가'}
