@@ -13,7 +13,6 @@ export type Content = {
   centerName: string;
   location: string;
   centerType: 'rehab' | 'athleteTraining' | 'hospital' | 'school';
-  purpose: string[];
   mediaType: 'youtube' | 'instagram' | 'image';
   mediaLink: string;
   description: string;

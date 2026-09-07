@@ -5,18 +5,10 @@ import { Content } from '@/lib/supabase'
 import { MapPin, Tag } from 'lucide-react'
 
 const CENTER_TYPE_LABEL: Record<string, string> = {
-  rehabilitation: '재활센터',
-  pilates: '필라테스',
-  fitness: '일반피트니스',
-  performance: '퍼포먼스',
-}
-
-const PURPOSE_LABEL: Record<string, string> = {
-  rehabilitation: '재활훈련',
-  bodyShape: '체형교정',
-  strength: '근력강화',
-  flexibility: '유연성',
-  athleticism: '운동 능력 개발',
+  rehab: '재활',
+  athleteTraining: '선수트레이닝',
+  hospital: '병원',
+  school: '학교(기관)',
 }
 
 function InstagramThumbnail({ content }: { content: Content }) {

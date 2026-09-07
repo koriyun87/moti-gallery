@@ -11,14 +11,6 @@ const CENTER_TYPES = [
   { id: 'school', label: '학교(기관)' },
 ]
 
-const PURPOSES = [
-  { id: 'rehabilitation', label: '재활훈련' },
-  { id: 'bodyShape', label: '체형교정' },
-  { id: 'strength', label: '근력강화' },
-  { id: 'flexibility', label: '유연성' },
-  { id: 'athleticism', label: '운동 능력 개발' },
-]
-
 interface AdminFormProps {
   initialData?: Content
   onSuccess: () => void
@@ -36,7 +28,6 @@ export default function AdminForm({
     centerName: string
     location: string
     centerType: Content['centerType']
-    purpose: string[]
     mediaType: Content['mediaType']
     mediaLink: string
     description: string
@@ -47,7 +38,6 @@ export default function AdminForm({
     centerName: '',
     location: '',
     centerType: 'rehab',
-    purpose: [],
     mediaType: 'instagram',
     mediaLink: '',
     description: '',
@@ -62,7 +52,6 @@ export default function AdminForm({
         centerName: initialData.centerName,
         location: initialData.location,
         centerType: initialData.centerType,
-        purpose: initialData.purpose,
         mediaType: initialData.mediaType,
         mediaLink: initialData.mediaLink,
         description: initialData.description,
@@ -92,7 +81,6 @@ export default function AdminForm({
         centerName: formData.centerName,
         location: formData.location,
         centerType: formData.centerType,
-        purpose: formData.purpose,
         mediaType: formData.mediaType,
         mediaLink: formData.mediaLink,
         description: formData.description,
@@ -122,15 +110,6 @@ export default function AdminForm({
     } finally {
       setLoading(false)
     }
-  }
-
-  const togglePurpose = (purposeId: string) => {
-    setFormData(prev => ({
-      ...prev,
-      purpose: prev.purpose.includes(purposeId)
-        ? prev.purpose.filter(p => p !== purposeId)
-        : [...prev.purpose, purposeId],
-    }))
   }
 
   return (
@@ -203,26 +182,6 @@ export default function AdminForm({
             </option>
           ))}
         </select>
-      </div>
-
-      {/* 활용 목적 */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          활용 목적 (복수 선택 가능) *
-        </label>
-        <div className="space-y-2">
-          {PURPOSES.map(purpose => (
-            <label key={purpose.id} className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={formData.purpose.includes(purpose.id)}
-                onChange={() => togglePurpose(purpose.id)}
-                className="w-4 h-4 rounded border-gray-300 text-moti-primary focus:ring-0"
-              />
-              <span className="text-sm text-gray-700">{purpose.label}</span>
-            </label>
-          ))}
-        </div>
       </div>
 
       {/* 미디어 타입 */}

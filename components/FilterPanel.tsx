@@ -11,20 +11,17 @@ interface FilterOption {
 interface FilterPanelProps {
   filters: {
     centerType: string[]
-    purpose: string[]
     location: string[]
     tags: string[]
     sports: string[]
   }
   onFilterChange: (filters: {
     centerType: string[]
-    purpose: string[]
     location: string[]
     tags: string[]
     sports: string[]
   }) => void
   centerTypes: FilterOption[]
-  purposes: FilterOption[]
   locations: string[]
   tags: string[]
   sports: string[]
@@ -36,7 +33,6 @@ export default function FilterPanel({
   filters,
   onFilterChange,
   centerTypes,
-  purposes,
   locations,
   tags,
   sports,
@@ -47,7 +43,7 @@ export default function FilterPanel({
 
   const handleToggleFilter = useCallback(
     (
-      category: 'centerType' | 'purpose' | 'location' | 'tags' | 'sports',
+      category: 'centerType' | 'location' | 'tags' | 'sports',
       value: string
     ) => {
       const currentFilters = filters[category]
@@ -131,26 +127,6 @@ export default function FilterPanel({
                 label={type.label}
                 checked={filters.centerType.includes(type.id)}
                 onChange={() => handleToggleFilter('centerType', type.id)}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* 활용 목적 */}
-      {purposes.length > 0 && (
-        <div>
-          <h4 className="font-semibold text-gray-900 mb-3 text-sm">
-            활용 목적
-          </h4>
-          <div className="space-y-2">
-            {purposes.map(purpose => (
-              <FilterCheckbox
-                key={purpose.id}
-                id={purpose.id}
-                label={purpose.label}
-                checked={filters.purpose.includes(purpose.id)}
-                onChange={() => handleToggleFilter('purpose', purpose.id)}
               />
             ))}
           </div>

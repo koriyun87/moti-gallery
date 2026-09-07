@@ -15,17 +15,8 @@ const CENTER_TYPES = [
   { id: 'school', label: '학교(기관)' },
 ]
 
-const PURPOSES = [
-  { id: 'rehabilitation', label: '재활훈련' },
-  { id: 'bodyShape', label: '체형교정' },
-  { id: 'strength', label: '근력강화' },
-  { id: 'flexibility', label: '유연성' },
-  { id: 'athleticism', label: '운동 능력 개발' },
-]
-
 type FilterState = {
   centerType: string[]
-  purpose: string[]
   location: string[]
   tags: string[]
   sports: string[]
@@ -43,28 +34,15 @@ const CENTER_TYPE_CODE_REVERSE = Object.fromEntries(
   Object.entries(CENTER_TYPE_CODE).map(([k, v]) => [v, k])
 )
 
-const PURPOSE_CODE: Record<string, string> = {
-  rehabilitation: '0',
-  bodyShape: '1',
-  strength: '2',
-  flexibility: '3',
-  athleticism: '4',
-}
-const PURPOSE_CODE_REVERSE = Object.fromEntries(
-  Object.entries(PURPOSE_CODE).map(([k, v]) => [v, k])
-)
-
 // URL 쿼리 파라미터 ↔ 필터 객체 변환 유틸
 function filtersFromParams(params: URLSearchParams): FilterState {
   const centerCodes = params.get('c')?.split(',').filter(Boolean) || []
-  const purposeCodes = params.get('p')?.split(',').filter(Boolean) || []
   const location = params.get('l')?.split(',').filter(Boolean) || []
   const tags = params.get('t')?.split(',').filter(Boolean) || []
   const sports = params.get('s')?.split(',').filter(Boolean) || []
 
   return {
     centerType: centerCodes.map(c => CENTER_TYPE_CODE_REVERSE[c]).filter(Boolean),
-    purpose: purposeCodes.map(c => PURPOSE_CODE_REVERSE[c]).filter(Boolean),
     location,
     tags,
     sports,
@@ -75,9 +53,6 @@ function paramsFromFilters(filters: FilterState): string {
   const params = new URLSearchParams()
   if (filters.centerType.length) {
     params.set('c', filters.centerType.map(id => CENTER_TYPE_CODE[id]).join(','))
-  }
-  if (filters.purpose.length) {
-    params.set('p', filters.purpose.map(id => PURPOSE_CODE[id]).join(','))
   }
   if (filters.location.length) {
     params.set('l', filters.location.join(','))
@@ -162,12 +137,6 @@ function GalleryContent() {
       filtered = filtered.filter(c => filterState.centerType.includes(c.centerType))
     }
 
-    if (filterState.purpose.length > 0) {
-      filtered = filtered.filter(c =>
-        c.purpose.some(p => filterState.purpose.includes(p))
-      )
-    }
-
     if (filterState.location.length > 0) {
       filtered = filtered.filter(c => filterState.location.includes(c.location))
     }
@@ -198,7 +167,6 @@ function GalleryContent() {
 
   const hasActiveFilters =
     filters.centerType.length > 0 ||
-    filters.purpose.length > 0 ||
     filters.location.length > 0 ||
     filters.tags.length > 0 ||
     filters.sports.length > 0
@@ -206,7 +174,6 @@ function GalleryContent() {
   const resetFilters = () => {
     const emptyFilters = {
       centerType: [],
-      purpose: [],
       location: [],
       tags: [],
       sports: [],
@@ -281,7 +248,6 @@ function GalleryContent() {
                   filters={filters}
                   onFilterChange={handleFilterChange}
                   centerTypes={CENTER_TYPES}
-                  purposes={PURPOSES}
                   locations={locations}
                   tags={allTags}
                   sports={allSports}
