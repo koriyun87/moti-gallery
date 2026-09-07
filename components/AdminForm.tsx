@@ -5,10 +5,10 @@ import { supabase, type Content } from '@/lib/supabase'
 import { Loader } from 'lucide-react'
 
 const CENTER_TYPES = [
-  { id: 'rehabilitation', label: '재활센터' },
-  { id: 'pilates', label: '필라테스' },
-  { id: 'fitness', label: '일반피트니스' },
-  { id: 'performance', label: '퍼포먼스' },
+  { id: 'rehab', label: '재활' },
+  { id: 'athleteTraining', label: '선수트레이닝' },
+  { id: 'hospital', label: '병원' },
+  { id: 'school', label: '학교(기관)' },
 ]
 
 const PURPOSES = [
@@ -46,7 +46,7 @@ export default function AdminForm({
     title: '',
     centerName: '',
     location: '',
-    centerType: 'rehabilitation',
+    centerType: 'rehab',
     purpose: [],
     mediaType: 'instagram',
     mediaLink: '',

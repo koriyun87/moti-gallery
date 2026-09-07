@@ -9,10 +9,10 @@ import BannerStrip from '@/components/BannerStrip'
 import { Filter, X, Link as LinkIcon } from 'lucide-react'
 
 const CENTER_TYPES = [
-  { id: 'rehabilitation', label: '재활센터' },
-  { id: 'pilates', label: '필라테스' },
-  { id: 'fitness', label: '일반피트니스' },
-  { id: 'performance', label: '퍼포먼스' },
+  { id: 'rehab', label: '재활' },
+  { id: 'athleteTraining', label: '선수트레이닝' },
+  { id: 'hospital', label: '병원' },
+  { id: 'school', label: '학교(기관)' },
 ]
 
 const PURPOSES = [
@@ -34,10 +34,10 @@ type FilterState = {
 // 센터컨셉/활용목적은 고정된 값 목록이라 짧은 숫자 코드로 압축 (URL 단축용)
 // ⚠️ 이 코드는 한번 정해지면 순서를 바꾸면 안 됨 (기존에 공유된 링크가 깨짐)
 const CENTER_TYPE_CODE: Record<string, string> = {
-  rehabilitation: '0',
-  pilates: '1',
-  fitness: '2',
-  performance: '3',
+  rehab: '0',
+  athleteTraining: '1',
+  hospital: '2',
+  school: '3',
 }
 const CENTER_TYPE_CODE_REVERSE = Object.fromEntries(
   Object.entries(CENTER_TYPE_CODE).map(([k, v]) => [v, k])
