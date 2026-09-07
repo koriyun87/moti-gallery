@@ -236,7 +236,7 @@ export default function AdminForm({
       {/* SNS 링크 */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          {formData.mediaType === 'instagram' ? 'YouTube' : 'Instagram'} 링크 *
+          {formData.mediaType === 'instagram' ? 'YouTube' : 'Instagram' } 링크 *
         </label>
         <input
           type="url"
@@ -248,8 +248,8 @@ export default function AdminForm({
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-moti-primary focus:border-transparent text-xs"
           placeholder={
             formData.mediaType === 'instagram'
-              ? 'https://youtube.com/watch?v=...'
-              : 'https://instagram.com/p/...'
+              ? 'https://instagram.com/p/...'
+              : 'https://youtube.com/watch?v=...'
           }
         />
       </div>
