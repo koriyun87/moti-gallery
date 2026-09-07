@@ -18,6 +18,7 @@ export type Content = {
   mediaLink: string;
   description: string;
   tags: string[];
+  sports: string[];
   createdAt: string;
   isPublished: boolean;
 };

@@ -14,17 +14,20 @@ interface FilterPanelProps {
     purpose: string[]
     location: string[]
     tags: string[]
+    sports: string[]
   }
   onFilterChange: (filters: {
     centerType: string[]
     purpose: string[]
     location: string[]
     tags: string[]
+    sports: string[]
   }) => void
   centerTypes: FilterOption[]
   purposes: FilterOption[]
   locations: string[]
   tags: string[]
+  sports: string[]
 }
 
 const INITIAL_VISIBLE_COUNT = 6
@@ -36,12 +39,17 @@ export default function FilterPanel({
   purposes,
   locations,
   tags,
+  sports,
 }: FilterPanelProps) {
   const [showAllLocations, setShowAllLocations] = useState(false)
   const [showAllTags, setShowAllTags] = useState(false)
+  const [showAllSports, setShowAllSports] = useState(false)
 
   const handleToggleFilter = useCallback(
-    (category: 'centerType' | 'purpose' | 'location' | 'tags', value: string) => {
+    (
+      category: 'centerType' | 'purpose' | 'location' | 'tags' | 'sports',
+      value: string
+    ) => {
       const currentFilters = filters[category]
       const newFilters = currentFilters.includes(value)
         ? currentFilters.filter(f => f !== value)
@@ -103,6 +111,9 @@ export default function FilterPanel({
     ? locations
     : locations.slice(0, INITIAL_VISIBLE_COUNT)
   const visibleTags = showAllTags ? tags : tags.slice(0, INITIAL_VISIBLE_COUNT)
+  const visibleSports = showAllSports
+    ? sports
+    : sports.slice(0, INITIAL_VISIBLE_COUNT)
 
   return (
     <div className="space-y-6">
@@ -168,6 +179,33 @@ export default function FilterPanel({
               expanded={showAllLocations}
               onClick={() => setShowAllLocations(prev => !prev)}
               hiddenCount={locations.length - INITIAL_VISIBLE_COUNT}
+            />
+          )}
+        </div>
+      )}
+
+      {/* 종목 */}
+      {sports.length > 0 && (
+        <div>
+          <h4 className="font-semibold text-gray-900 mb-3 text-sm">
+            종목
+          </h4>
+          <div className="space-y-2">
+            {visibleSports.map(sport => (
+              <FilterCheckbox
+                key={sport}
+                id={sport}
+                label={sport}
+                checked={filters.sports.includes(sport)}
+                onChange={() => handleToggleFilter('sports', sport)}
+              />
+            ))}
+          </div>
+          {sports.length > INITIAL_VISIBLE_COUNT && (
+            <ShowMoreButton
+              expanded={showAllSports}
+              onClick={() => setShowAllSports(prev => !prev)}
+              hiddenCount={sports.length - INITIAL_VISIBLE_COUNT}
             />
           )}
         </div>

@@ -41,6 +41,7 @@ export default function AdminForm({
     mediaLink: string
     description: string
     tags: string
+    sports: string
   }>({
     title: '',
     centerName: '',
@@ -51,6 +52,7 @@ export default function AdminForm({
     mediaLink: '',
     description: '',
     tags: '',
+    sports: '',
   })
 
   useEffect(() => {
@@ -65,6 +67,7 @@ export default function AdminForm({
         mediaLink: initialData.mediaLink,
         description: initialData.description,
         tags: initialData.tags.join(', '),
+        sports: (initialData.sports || []).join(', '),
       })
     }
   }, [initialData])
@@ -79,6 +82,11 @@ export default function AdminForm({
         .map(t => t.trim())
         .filter(t => t)
 
+      const parsedSports = formData.sports
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s)
+
       const payload = {
         title: formData.title,
         centerName: formData.centerName,
@@ -89,6 +97,7 @@ export default function AdminForm({
         mediaLink: formData.mediaLink,
         description: formData.description,
         tags: parsedTags,
+        sports: parsedSports,
       }
 
       if (initialData) {
@@ -281,6 +290,20 @@ export default function AdminForm({
           onChange={e => setFormData({ ...formData, tags: e.target.value })}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-moti-primary focus:border-transparent"
           placeholder="척추, 근력, 회복"
+        />
+      </div>
+
+      {/* 종목 */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          종목 (쉼표로 구분)
+        </label>
+        <input
+          type="text"
+          value={formData.sports}
+          onChange={e => setFormData({ ...formData, sports: e.target.value })}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-moti-primary focus:border-transparent"
+          placeholder="골프, 농구, 야구"
         />
       </div>
 

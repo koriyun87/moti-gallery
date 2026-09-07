@@ -28,6 +28,7 @@ type FilterState = {
   purpose: string[]
   location: string[]
   tags: string[]
+  sports: string[]
 }
 
 // 센터컨셉/활용목적은 고정된 값 목록이라 짧은 숫자 코드로 압축 (URL 단축용)
@@ -59,12 +60,14 @@ function filtersFromParams(params: URLSearchParams): FilterState {
   const purposeCodes = params.get('p')?.split(',').filter(Boolean) || []
   const location = params.get('l')?.split(',').filter(Boolean) || []
   const tags = params.get('t')?.split(',').filter(Boolean) || []
+  const sports = params.get('s')?.split(',').filter(Boolean) || []
 
   return {
     centerType: centerCodes.map(c => CENTER_TYPE_CODE_REVERSE[c]).filter(Boolean),
     purpose: purposeCodes.map(c => PURPOSE_CODE_REVERSE[c]).filter(Boolean),
     location,
     tags,
+    sports,
   }
 }
 
@@ -82,6 +85,9 @@ function paramsFromFilters(filters: FilterState): string {
   if (filters.tags.length) {
     params.set('t', filters.tags.join(','))
   }
+  if (filters.sports.length) {
+    params.set('s', filters.sports.join(','))
+  }
   return params.toString()
 }
 
@@ -96,6 +102,7 @@ function GalleryContent() {
   const [showFilters, setShowFilters] = useState(false)
   const [locations, setLocations] = useState<string[]>([])
   const [allTags, setAllTags] = useState<string[]>([])
+  const [allSports, setAllSports] = useState<string[]>([])
   const [linkCopied, setLinkCopied] = useState(false)
 
   // 초기 필터 상태를 URL에서 읽어옴
@@ -129,6 +136,12 @@ function GalleryContent() {
       // 태그 추출
       const uniqueTags = [...new Set(typedData.flatMap(c => c.tags))]
       setAllTags(uniqueTags.sort())
+
+      // 종목 추출
+      const uniqueSports = [
+        ...new Set(typedData.flatMap(c => c.sports || [])),
+      ]
+      setAllSports(uniqueSports.sort())
 
       // URL에 있던 필터를 그대로 적용해서 초기 렌더링
       applyFilters(typedData, filtersFromParams(searchParams))
@@ -165,6 +178,12 @@ function GalleryContent() {
       )
     }
 
+    if (filterState.sports.length > 0) {
+      filtered = filtered.filter(c =>
+        (c.sports || []).some(sport => filterState.sports.includes(sport))
+      )
+    }
+
     setFilteredContents(filtered)
   }
 
@@ -181,10 +200,17 @@ function GalleryContent() {
     filters.centerType.length > 0 ||
     filters.purpose.length > 0 ||
     filters.location.length > 0 ||
-    filters.tags.length > 0
+    filters.tags.length > 0 ||
+    filters.sports.length > 0
 
   const resetFilters = () => {
-    const emptyFilters = { centerType: [], purpose: [], location: [], tags: [] }
+    const emptyFilters = {
+      centerType: [],
+      purpose: [],
+      location: [],
+      tags: [],
+      sports: [],
+    }
     setFilters(emptyFilters)
     applyFilters(contents, emptyFilters)
     router.replace(pathname, { scroll: false })
@@ -258,6 +284,7 @@ function GalleryContent() {
                   purposes={PURPOSES}
                   locations={locations}
                   tags={allTags}
+                  sports={allSports}
                 />
               </div>
             </div>
