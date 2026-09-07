@@ -279,20 +279,6 @@ export default function AdminForm({
         />
       </div>
 
-      {/* 태그 */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          태그 (쉼표로 구분)
-        </label>
-        <input
-          type="text"
-          value={formData.tags}
-          onChange={e => setFormData({ ...formData, tags: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-moti-primary focus:border-transparent"
-          placeholder="척추, 근력, 회복"
-        />
-      </div>
-
       {/* 종목 */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -304,6 +290,20 @@ export default function AdminForm({
           onChange={e => setFormData({ ...formData, sports: e.target.value })}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-moti-primary focus:border-transparent"
           placeholder="골프, 농구, 야구"
+        />
+      </div>
+
+      {/* 태그 */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          태그 (쉼표로 구분)
+        </label>
+        <input
+          type="text"
+          value={formData.tags}
+          onChange={e => setFormData({ ...formData, tags: e.target.value })}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-moti-primary focus:border-transparent"
+          placeholder="척추, 근력, 회복"
         />
       </div>
 
