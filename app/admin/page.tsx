@@ -546,9 +546,22 @@ export default function AdminPage() {
                             {content.centerName} • {content.location}
                           </p>
                           <div className="mt-2 flex flex-wrap gap-1">
-                            <span className="inline-block text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                              {content.centerType}
-                            </span>
+                            <span
+                            className={
+                              'inline-block text-xs px-2 py-1 rounded ' +
+                              (content.centerType === 'rehab'
+                                ? 'bg-green-100 text-green-800'
+                                : content.centerType === 'athleteTraining'
+                                ? 'bg-orange-100 text-orange-800'
+                                : content.centerType === 'hospital'
+                                ? 'bg-blue-100 text-blue-800'
+                                : content.centerType === 'school'
+                                ? 'bg-purple-100 text-purple-800'
+                                : 'bg-gray-100 text-gray-800')
+                            }
+                          >
+                            {content.centerType}
+                          </span>
                           </div>
                         </div>
                         <div className="flex gap-2">

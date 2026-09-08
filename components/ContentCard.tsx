@@ -11,6 +11,13 @@ const CENTER_TYPE_LABEL: Record<string, string> = {
   school: '학교(기관)',
 }
 
+const CENTER_TYPE_COLOR: Record<string, string> = {
+  rehab: 'bg-green-100 text-green-800',
+  athleteTraining: 'bg-orange-100 text-orange-800',
+  hospital: 'bg-blue-100 text-blue-800',
+  school: 'bg-purple-100 text-purple-800',
+}
+
 function InstagramThumbnail({ content }: { content: Content }) {
   const [failed, setFailed] = useState(false)
   const match = content.mediaLink.match(/\/p\/([^/?]+)/)
@@ -118,7 +125,13 @@ export default function ContentCard({ content }: { content: Content }) {
 
         {/* 센터컨셉 뱃지 */}
         <div className="mt-2 sm:mt-3">
-          <span className="inline-block text-[10px] sm:text-xs font-medium bg-blue-100 text-blue-800 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full">
+          <span
+            className={
+              'inline-block text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-3 sm:py-1 rounded-full ' +
+              (CENTER_TYPE_COLOR[content.centerType] ||
+                'bg-gray-100 text-gray-800')
+            }
+          >
             {CENTER_TYPE_LABEL[content.centerType] || content.centerType}
           </span>
         </div>
