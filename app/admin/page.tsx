@@ -549,14 +549,6 @@ export default function AdminPage() {
                             <span className="inline-block text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
                               {content.centerType}
                             </span>
-                            {content.purpose.map((p) => (
-                              <span
-                                key={p}
-                                className="inline-block text-xs bg-green-100 text-green-800 px-2 py-1 rounded"
-                              >
-                                {p}
-                              </span>
-                            ))}
                           </div>
                         </div>
                         <div className="flex gap-2">
