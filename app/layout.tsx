@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import SiteAnalytics from '@/components/SiteAnalytics'
 
 export const metadata: Metadata = {
   title: "MOTY 콘텐츠 갤러리",
@@ -52,6 +53,10 @@ export default function RootLayout({
               <p>
                 E-mail. buzz@abridge.kr &nbsp;|&nbsp; 개인정보보호책임자. 김진용
               </p>
+              <p className="pt-2 text-gray-500">
+                서비스 개선을 위해 Vercel Analytics, Microsoft Clarity로 방문 기록(페이지 이동·클릭·스크롤)을 수집합니다.
+                개인을 식별하는 정보는 수집하지 않습니다.
+              </p>
             </div>
 
             <div className="pt-6 border-t border-gray-800 flex justify-between items-center">
@@ -67,6 +72,8 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
+
+        <SiteAnalytics />
       </body>
     </html>
   )
