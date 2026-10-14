@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Content } from '@/lib/supabase'
+import { trackContentClick } from '@/lib/track'
 import { MapPin, Tag } from 'lucide-react'
 
 const CENTER_TYPE_LABEL: Record<string, string> = {
@@ -61,20 +62,51 @@ function InstagramThumbnail({ content }: { content: Content }) {
   )
 }
 
-function MediaEmbed({ content }: { content: Content }) {
-  if (content.mediaType === 'youtube') {
-    const videoId =
+// 유튜브는 카드 안에서 바로 재생되기 때문에 링크 클릭이 생기지 않습니다.
+// 그래서 영상 화면을 눌러 포커스가 영상으로 옮겨가는 순간을 "재생"으로 기록합니다.
+function YouTubeEmbed({ content }: { content: Content }) {
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const tracked = useRef(false)
+
+  useEffect(() => {
+    const onBlur = () => {
+      setTimeout(() => {
+        if (
+          !tracked.current &&
+          document.activeElement === iframeRef.current
+        ) {
+          tracked.current = true
+          trackContentClick(content.id, 'play')
+        }
+      }, 0)
+    }
+    window.addEventListener('blur', onBlur)
+    return () => window.removeEventListener('blur', onBlur)
+  }, [content.id])
+
+  let videoId: string | undefined
+  try {
+    videoId =
       new URL(content.mediaLink).searchParams.get('v') ||
       content.mediaLink.split('/').pop()
+  } catch {
+    videoId = content.mediaLink.split('/').pop()
+  }
 
-    return (
-      <iframe
-        className="absolute inset-0 w-full h-full"
-        src={'https://www.youtube.com/embed/' + videoId}
-        title={content.title}
-        allowFullScreen
-      />
-    )
+  return (
+    <iframe
+      ref={iframeRef}
+      className="absolute inset-0 w-full h-full"
+      src={'https://www.youtube.com/embed/' + videoId}
+      title={content.title}
+      allowFullScreen
+    />
+  )
+}
+
+function MediaEmbed({ content }: { content: Content }) {
+  if (content.mediaType === 'youtube') {
+    return <YouTubeEmbed content={content} />
   }
 
   if (content.mediaType === 'instagram') {
@@ -93,6 +125,7 @@ export default function ContentCard({ content }: { content: Content }) {
       href={content.mediaLink}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => trackContentClick(content.id, 'open')}
       className="flex sm:block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
     >
       {/* 미디어 */}

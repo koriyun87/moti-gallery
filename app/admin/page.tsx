@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { supabase, type Content, type Banner } from '@/lib/supabase'
 import AdminForm from '@/components/AdminForm'
+import ContentStats from '@/components/ContentStats'
 import {
   Plus,
   Trash2,
@@ -460,6 +461,9 @@ export default function AdminPage() {
             {hiddenCount})
           </p>
         </div>
+
+        {/* 콘텐츠 클릭 통계 */}
+        <ContentStats contents={contents} />
 
         {/* 배너 관리 */}
         <BannerManager />

@@ -15,7 +15,6 @@ const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID
 export default function SiteAnalytics() {
   const pathname = usePathname()
   const isAdmin = pathname?.startsWith('/admin')
-
   return (
     <>
       <Analytics
